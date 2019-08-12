@@ -5,6 +5,8 @@
 
 var canvas;
 var gl;
+var gameover;
+var gamepause;
 
 var WIDTH;
 var HEIGHT;
@@ -20,7 +22,7 @@ var ALIEN_MOVEMENT_SPEED     = 0.003;
 var ALIEN_FALL_SPEED_DEFAULT = 0.0005;
 var ALIEN_FALL_ACCELERATION  = 0.0003;
 var ALIEN_ACCELERATION       = 0.00025;
-var ALIEN_COUNT_DEFAULT      = 12;
+var ALIEN_COUNT_DEFAULT      = 14;
 var ALIEN_SHOOT_FREQUENCY    = 100; // Every x amount of frames
 var BULLET_SPEED             = 0.025;
 
@@ -29,14 +31,14 @@ var FPS_INTERVAL = 1000 / 60;
 var then;
 
 var player = [];
+var player_bullets = [];
 var player_movement = 0;
 var player_position = 0;
-
-var player_bullet_count = 0;
 var alien_bullet_count = 0;
 
 var pressed = false;
 var aliens = [];
+var alien_bullets = [];
 var alien_count = ALIEN_COUNT_DEFAULT; // even numbers only
 var alien_count_front = Math.floor(ALIEN_COUNT_DEFAULT/2);
 var alien_shoot_timer = 0;
@@ -73,8 +75,8 @@ function getKey(key) {
     resetGame();
   }
 
-  if (key.key == 'q'){
-    QuitGame();
+  if (key.key == 'p'){
+    PauseGame();
   }
 }
 
@@ -103,6 +105,10 @@ function reset_time() {
 function init() {
 
     canvas = document.getElementById( "gl-canvas" );
+    gameover = document.getElementById( "Game_Over" );
+    gamepause = document.getElementById( "Game_Pause" );
+    gameover.hidden = true;
+    gamepause.hidden = true;
 
     resizeCanvas();
     generateAliens();
@@ -114,8 +120,6 @@ function init() {
     gl.viewport( 0, 0, WIDTH, HEIGHT );
     gl.clearColor( 0, 0, 0, 0 );
 
-
-
     //
     //  Load shaders and initialize attribute buffers
     //
@@ -126,9 +130,11 @@ function init() {
     pBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, pBuffer);
 
+
     // Associate out shader variables with our data buffer
     pPosition = gl.getAttribLocation( program_pl, "vPosition" );
     gl.vertexAttribPointer( pPosition, 2, gl.FLOAT, false, 0, 0 );
+    gl.enableVertexAttribArray( pPosition );
 
     var colorLoc = gl.getUniformLocation(program_pl, "vColor");
     gl.uniform4fv(colorLoc, [0.0, 1.0, 0.0, 1.0]);  // set color
@@ -156,14 +162,30 @@ function resetGame() {
   alien_bullet_count  = 0;
   alien_shoot_timer   = 0;
   player_position     = 0;
-  player_bullet_count = 0;
   player_movement     = 0;
   player              = [];
   quitGame            = 1;
+  gameover.hidden     = true;
   window.addEventListener("click", shootCannon);
   generateAliens();
   reset_time();
   resizeCanvas();
+
+  render();
+}
+
+function PauseGame() {
+  if (quitGame == 0) {
+    quitGame = 1;
+    gamepause.hidden = true;
+    window.addEventListener("click", shootCannon);
+    render();
+  }
+  else {
+    quitGame = 0;
+    gamepause.hidden = false;
+    window.removeEventListener("click", shootCannon);
+  }
 }
 
 function QuitGame() {
@@ -172,7 +194,6 @@ function QuitGame() {
   alien_count         = 0;
   alien_count_front   = 0;
   alien_bullet_count  = 0;
-  player_bullet_count = 0;
   quitGame            = 0;
   window.removeEventListener("click", shootCannon);
 }
@@ -213,10 +234,9 @@ function generateAliens() {
 
 function shootCannon() {
   //console.log("bam");
-  player_bullet_count += 1;
-  player.push(vec2(player_position - 0.5*OFFSET, -1 + 2* BLOCKRADIUS));
-  player.push(vec2(player_position, -1 + 2.7* BLOCKRADIUS));
-  player.push(vec2(player_position + 0.5*OFFSET, -1 + 2* BLOCKRADIUS));
+  player_bullets.push(vec2(player_position - 0.5*OFFSET, -1 + 2* BLOCKRADIUS));
+  player_bullets.push(vec2(player_position, -1 + 2.7* BLOCKRADIUS));
+  player_bullets.push(vec2(player_position + 0.5*OFFSET, -1 + 2* BLOCKRADIUS));
 }
 
 function Alien_Fire(index) {
@@ -226,9 +246,9 @@ function Alien_Fire(index) {
       for (i=alien_count - alien_count_front; i<=alien_count; i++) {
           var j = i*6;
           alien_bullet_count += 1;
-          aliens.push(vec2( aliens[j][0]  + 0.5*OFFSET,    aliens[j][1]));
-          aliens.push(vec2( aliens[j][0]  + OFFSET, aliens[j][1] - OFFSET));
-          aliens.push(vec2( aliens[j+2][0]- 0.5*OFFSET,    aliens[j][1]));
+          aliens.push(vec2( aliens[j][0]  + 0.4*OFFSET,    aliens[j][1]));
+          aliens.push(vec2( aliens[j][0]  + OFFSET, aliens[j][1] - 1.2*OFFSET));
+          aliens.push(vec2( aliens[j+2][0]- 0.4*OFFSET,    aliens[j][1]));
       }
     }
     else {
@@ -280,10 +300,10 @@ function Alien_Movement() {
 
 function Bullet_Movement() {
   // Player Cannon
-  for (i=0; i<3*player_bullet_count; i+=3) {
-    player[6+i] = vec2(player[6+i][0], player[6+i][1] + BULLET_SPEED);
-    player[7+i] = vec2(player[7+i][0], player[7+i][1] + BULLET_SPEED);
-    player[8+i] = vec2(player[8+i][0], player[8+i][1] + BULLET_SPEED);
+  for (i=0; i<player_bullets.length; i+=3) {
+    player_bullets[i]   = vec2(player_bullets[i][0],   player_bullets[i][1] + BULLET_SPEED);
+    player_bullets[1+i] = vec2(player_bullets[1+i][0], player_bullets[1+i][1] + BULLET_SPEED);
+    player_bullets[2+i] = vec2(player_bullets[2+i][0], player_bullets[2+i][1] + BULLET_SPEED);
   }
   // Alien Cannon
   var j = alien_count * 6;
@@ -316,8 +336,7 @@ function Alien_Collisions() {
 }
 
 function Remove_Player_Bullet(index) {
-  player_bullet_count -= 1;
-  player.splice(index,3);
+  player_bullets.splice(index,3);
 }
 
 function Remove_Alien_Bullet(index) {
@@ -334,12 +353,12 @@ function Remove_Alien(index) {
 }
 
 function Player_Bullet_Collisions() {
-  var index = 6;
-  while (index < 3*player_bullet_count+6) {
+  var index = 0;
+  while (index < player_bullets.length) {
     var inc = true;
 
     // remove if bullet collides with top of canvas
-    if (player[index][1] > 1) {
+    if (player_bullets[index][1] > 1) {
       Remove_Player_Bullet(index);
       continue;
     }
@@ -347,8 +366,8 @@ function Player_Bullet_Collisions() {
     // remove if bullet collides with alien
     for (i=0; i<alien_count; i++) {
       var j = 6*i;
-      if (player[index+1][1] > aliens[j][1] && player[index+1][1] < aliens[j+1][1]) {
-        if (player[index+2][0] > aliens[j][0] && player[index][0] < aliens[j+2][0]) {
+      if (player_bullets[index+1][1] > aliens[j][1] && player_bullets[index+1][1] < aliens[j+1][1]) {
+        if (player_bullets[index+2][0] > aliens[j][0] && player_bullets[index][0] < aliens[j+2][0]) {
           Remove_Player_Bullet(index);
           Remove_Alien(j);
           inc = false;
@@ -375,8 +394,11 @@ function Alien_Bullet_Collisions() {
 }
 
 function GameOver() {
-  alert("GAME OVER - You lost...");
-  resetGame();
+  //alert("GAME OVER - You lost...");
+  var gameover = document.getElementById( "Game_Over" );
+  gameover.hidden  = false;
+  // resetGame();
+  quitGame = 0;
 }
 
 function Check_Game_Status() {
@@ -400,20 +422,21 @@ function render() {
         Alien_Movement();
         Alien_Fire();
         Bullet_Movement();
+      } else {
+        return;
       }
 
       gl.viewport(0, 0, WIDTH, HEIGHT);
 
       gl.clear( gl.COLOR_BUFFER_BIT );
+
       gl.useProgram( program_pl );
-      gl.enableVertexAttribArray( pPosition );
       gl.bindBuffer(gl.ARRAY_BUFFER, pBuffer);
-      gl.bufferData( gl.ARRAY_BUFFER, flatten(player),  gl.STATIC_DRAW);
+      gl.bufferData( gl.ARRAY_BUFFER, flatten(player.concat(player_bullets)),  gl.STATIC_DRAW);
       gl.vertexAttribPointer( pPosition, 2, gl.FLOAT, false, 0, 0 );
-      gl.drawArrays( gl.TRIANGLES, 0, 6*quitGame + 3*player_bullet_count );
+      gl.drawArrays( gl.TRIANGLES, 0, 6*quitGame + player_bullets.length);
 
       gl.useProgram( program_al );
-      gl.enableVertexAttribArray( aPosition );
       gl.bindBuffer(gl.ARRAY_BUFFER, aBuffer);
       gl.bufferData( gl.ARRAY_BUFFER, flatten(aliens),  gl.STATIC_DRAW);
       gl.vertexAttribPointer( aPosition, 2, gl.FLOAT, false, 0, 0 );

@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Space Invaders</title>
+<link href="https://fonts.googleapis.com/css?family=Press+Start+2P&display=swap" rel="stylesheet">
 </head>
 
 <script id="vertex-shader" type="x-shader/x-vertex">
@@ -41,10 +42,31 @@ main()
 
   }
   body {
+    font-family: 'Press Start 2P', cursive;
     margin: 0;
-    background: url('./space.jpg');
+    background-image: url('./space.jpg');
     background-size: 100% 100%;
-    background-color: black;
+    /* background: repeating-linear-gradient(to bottom, #0f0a1e, #0f0a1e 2px, #140e29 2px, #140e29 4px); */
+  }
+  .game-text {
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    height: 0%;
+    color: #fff;
+    width: 100%;
+    text-align: center;
+    margin: auto;
+    line-height: 40px;
+    letter-spacing: 5px;
+    text-shadow: -2px 0 0 #fdff2a, -4px 0 0 #df4a42, 2px 0 0 #91fcfe, 4px 0 0 #4405fc;
+  }
+
+  #Game_Over h1 {
+    font-size: 40px;
   }
 </style>
 <script type="text/javascript" src="./Common/webgl-utils.js"></script>
@@ -56,5 +78,16 @@ main()
 <canvas id="gl-canvas">
 Oops ... your browser doesn't support the HTML5 canvas element
 </canvas>
+
+<div id="Game_Over" class="game-text">
+  <h1>Game Over!</h1>
+  <p>Press R to restart</p>
+</div>
+<div id="Game_Pause" class="game-text">
+  <h1>Paused</h1>
+  <p>Press P to continue</p>
+</div>
+
+
 </body>
 </html>
