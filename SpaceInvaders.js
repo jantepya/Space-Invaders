@@ -10,9 +10,9 @@ var WIDTH;
 var HEIGHT;
 var RATIO;
 
-var BLOCKRADIUS = 0.1;
+var BLOCKRADIUS = 0.08;
 var LIMIT = 1-(BLOCKRADIUS/2);
-var OFFSET;
+var OFFSET ;
 
 var PLAYER_MOVEMENT_SPEED    = 0.01;
 var ALIEN_MOVEMENT_SPEED     = 0.003;
@@ -227,7 +227,7 @@ function Alien_Fire(index) {
           var j = i*6;
           alien_bullet_count += 1;
           aliens.push(vec2( aliens[j][0]  + 0.5*OFFSET,    aliens[j][1]));
-          aliens.push(vec2( aliens[j][0]  + BLOCKRADIUS/2, aliens[j][1] - 0.5* BLOCKRADIUS));
+          aliens.push(vec2( aliens[j][0]  + OFFSET, aliens[j][1] - OFFSET));
           aliens.push(vec2( aliens[j+2][0]- 0.5*OFFSET,    aliens[j][1]));
       }
     }
@@ -236,7 +236,7 @@ function Alien_Fire(index) {
           var j = i*6;
           alien_bullet_count += 1;
           aliens.push(vec2( aliens[j][0]  + 0.5*OFFSET,    aliens[j][1]));
-          aliens.push(vec2( aliens[j][0]  + BLOCKRADIUS/2, aliens[j][1] - 0.5* BLOCKRADIUS));
+          aliens.push(vec2( aliens[j][0]  + OFFSET, aliens[j][1] - OFFSET));
           aliens.push(vec2( aliens[j+2][0]- 0.5*OFFSET,    aliens[j][1]));
       }
     }
