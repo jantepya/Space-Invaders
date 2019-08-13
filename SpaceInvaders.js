@@ -152,6 +152,7 @@ function resetGame() {
   alien_bullets       = [];
   quitGame            = 1;
   gameover.hidden     = true;
+  gamepause.hidden    = true;
   window.addEventListener("click", shootCannon);
   generateAliens();
   reset_time();

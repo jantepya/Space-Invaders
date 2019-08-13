@@ -2,10 +2,13 @@
 
 
 ## Controls:
-Left/Right arrow keys to move
-Left mouse click to shoot
-'r' to restart the game
-'q' to quit the game
+
+| Key | Action |
+|-----|--------|
+| Arrow Keys | Move left and right |
+| Left Mouse Button| Shoot|
+| R | Restart Game |
+| P | Pause Game |
 
 ## Credits
 Background image: https://www.pexels.com/@pixabay
