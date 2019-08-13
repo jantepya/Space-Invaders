@@ -1,0 +1,43 @@
+#gl-canvas {
+  width: 100vw;
+  height: 100vh;
+  display: block;
+
+}
+
+#screen {
+  background: repeating-linear-gradient(to bottom, #1dff00, #a200ff 2px, #ff7af7 2px, #9d9b9d 4px);
+  z-index= 20;
+  opacity: 0.1;
+  position:absolute;
+  width: 100vw;
+  height: 100vh;
+  top:0 ;
+}
+
+body {    margin: 0;
+
+  font-family: 'Press Start 2P', cursive;
+  background-image: url('./space.jpg');
+  background-size: 100% 100%;
+}
+.game-text {
+
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  height: 0%;
+  color: #fff;
+  width: 100%;
+  text-align: center;
+  margin: auto;
+  line-height: 40px;
+  letter-spacing: 5px;
+  text-shadow: -2px 0 0 #fdff2a, -4px 0 0 #df4a42, 2px 0 0 #91fcfe, 4px 0 0 #4405fc;
+}
+
+#Game_Over h1 {
+  font-size: 40px;
+}
