@@ -1,7 +1,7 @@
 // // TODO:
-// Get rid of multiple shader programs
 // image resize working
 // cooler shapes
+// Fix alien regen logic
 
 var canvas;
 var gl;
@@ -51,12 +51,9 @@ var alien_fall_speed = ALIEN_FALL_SPEED_DEFAULT;
 var quitGame = 1;
 
 var pBuffer;
-var aBuffer;
 var program;
-var program_al;
-var program_pl;
 var pPosition;
-var aPosition;
+var colorLoc;
 
 window.onload = init;
 window.addEventListener("click", shootCannon);
@@ -126,32 +123,16 @@ function init() {
     //
     //  Load shaders and initialize attribute buffers
     //
-    program_pl = initShaders( gl, "vertex-shader", "fragment-shader" );
-    program_al = initShaders( gl, "vertex-shader", "fragment-shader" );
-    //
-    gl.useProgram( program_pl );
+    program = initShaders( gl, "vertex-shader", "fragment-shader" );
+    gl.useProgram( program );
+
     pBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, pBuffer);
-
-
-    // Associate out shader variables with our data buffer
-    pPosition = gl.getAttribLocation( program_pl, "vPosition" );
+    pPosition = gl.getAttribLocation( program, "vPosition" );
     gl.vertexAttribPointer( pPosition, 2, gl.FLOAT, false, 0, 0 );
     gl.enableVertexAttribArray( pPosition );
 
-    var colorLoc = gl.getUniformLocation(program_pl, "vColor");
-    gl.uniform4fv(colorLoc, [0.0, 1.0, 0.0, 1.0]);  // set color
-
-    /////
-    gl.useProgram( program_al );
-    aBuffer = gl.createBuffer();
-    gl.bindBuffer( gl.ARRAY_BUFFER, aBuffer );
-
-    aPosition = gl.getAttribLocation( program_al, "vPosition" );
-    gl.vertexAttribPointer( aPosition, 2, gl.FLOAT, false, 0, 0 );
-
-    colorLoc = gl.getUniformLocation(program_al, "vColor");
-    gl.uniform4fv(colorLoc, [1.0, 0.0, 0.0, 1.0]);  // set color
+    colorLoc = gl.getUniformLocation(program, "vColor");
 
     render();
 };
@@ -419,10 +400,8 @@ function Alien_Bullet_Collisions() {
 }
 
 function GameOver() {
-  //alert("GAME OVER - You lost...");
   var gameover = document.getElementById( "Game_Over" );
   gameover.hidden  = false;
-  // resetGame();
   quitGame = 0;
 }
 
@@ -455,17 +434,14 @@ function render() {
       gl.clear( gl.COLOR_BUFFER_BIT );
       gl.viewport( 0, 0, WIDTH, HEIGHT );
 
-      gl.useProgram( program_pl );
-      gl.bindBuffer(gl.ARRAY_BUFFER, pBuffer);
-      gl.bufferData( gl.ARRAY_BUFFER, flatten(player.concat(player_bullets)),  gl.STATIC_DRAW);
-      gl.vertexAttribPointer( pPosition, 2, gl.FLOAT, false, 0, 0 );
-      gl.drawArrays( gl.TRIANGLES, 0, 6*quitGame + player_bullets.length);
+      gl.bufferData( gl.ARRAY_BUFFER, flatten(player.concat(player_bullets, aliens, alien_bullets)),  gl.STATIC_DRAW);
 
-      gl.useProgram( program_al );
-      gl.bindBuffer(gl.ARRAY_BUFFER, aBuffer);
-      gl.bufferData( gl.ARRAY_BUFFER, flatten(aliens.concat(alien_bullets)),  gl.STATIC_DRAW);
-      gl.vertexAttribPointer( aPosition, 2, gl.FLOAT, false, 0, 0 );
-      gl.drawArrays( gl.TRIANGLES, 0, 6*alien_count + alien_bullets.length);
+      gl.uniform4fv(colorLoc, [0.0, 1.0, 0.0, 1.0]);  // set color
+      gl.drawArrays( gl.TRIANGLES, 0, 6 + player_bullets.length);
+
+      gl.uniform4fv(colorLoc, [1.0, 0.0, 0.0, 1.0]);  // set color
+      gl.drawArrays( gl.TRIANGLES, 6 + player_bullets.length, aliens.length + alien_bullets.length);
+
 
       Player_Bullet_Collisions();
       Alien_Bullet_Collisions();
