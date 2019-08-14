@@ -8,7 +8,7 @@
 #screen {
   background: repeating-linear-gradient(to bottom, #1dff00, #a200ff 2px, #ff7af7 2px, #9d9b9d 4px);
   z-index= 20;
-  opacity: 0.1;
+  opacity: 0.15;
   position:absolute;
   width: 100vw;
   height: 100vh;
@@ -20,6 +20,7 @@ body {    margin: 0;
   font-family: 'Press Start 2P', cursive;
   background-image: url('./space.jpg');
   background-size: 100% 100%;
+
 }
 .game-text {
 
@@ -40,4 +41,18 @@ body {    margin: 0;
 
 #Game_Over h1 {
   font-size: 40px;
+}
+
+#score {
+  position: absolute;
+  top: 0;
+  left: 10px;
+  bottom: 0;
+  right: 0;
+  color: #fff;
+  margin: auto;
+  line-height: 45px;
+  font-size: 25px;
+  letter-spacing: 5px;
+  text-shadow: -2px 0 0 #fdff2a, -4px 0 0 #df4a42, 2px 0 0 #91fcfe, 4px 0 0 #4405fc;
 }

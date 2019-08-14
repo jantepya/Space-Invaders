@@ -1,12 +1,10 @@
-// // TODO:
-// get image resize working
-// cooler shapes
-// Fix alien regen logic
 
 var canvas;
 var gl;
+
 var gameover;
 var gamepause;
+var gamescore;
 
 var WIDTH;
 var HEIGHT;
@@ -16,7 +14,7 @@ var BLOCKRADIUS = 0.08;
 var LIMIT = 1-(BLOCKRADIUS/2);
 var OFFSET ;
 
-var PLAYER_MOVEMENT_SPEED    = 0.008;
+var PLAYER_MOVEMENT_SPEED    = 0.0082;
 var ALIEN_MOVEMENT_SPEED     = 0.003;
 
 var ALIEN_MOVEMENT_RANGE     = 0.2;
@@ -49,6 +47,7 @@ var alien_origin = [];
 var alien_fall_speed = ALIEN_FALL_SPEED_DEFAULT;
 
 var quitGame = 1;
+var score = 0;
 
 var pBuffer;
 var program;
@@ -176,20 +175,21 @@ function reset_time() {
   then = Date.now();
 }
 
+
+function Update_Score() {
+  score += 1;
+  console.log(gamescore);
+  gamescore.innerText  = score;
+}
+
 function init() {
 
     canvas = document.getElementById( "gl-canvas" );
     gameover = document.getElementById( "Game_Over" );
     gamepause = document.getElementById( "Game_Pause" );
-    // gameover.hidden = true;
-    // gamepause.hidden = true;
-    //
-    // resizeCanvas();
-    // generateAliens();
-    // reset_time();
-    // player = player_default.slice(0);
-    resetGame();
+    gamescore = document.getElementById( "score" );
 
+    resetGame();
 
     gl = WebGLUtils.setupWebGL( canvas );
     if ( !gl ) { alert( "WebGL isn't available" ); }
@@ -228,8 +228,10 @@ function resetGame() {
   alien_bullets       = [];
   alien_origin        = [];
   quitGame            = 1;
+  score               = 0;
   gameover.hidden     = true;
   gamepause.hidden    = true;
+  gamescore.innerText = score;
   window.addEventListener("click", shootCannon);
   resizeCanvas();
   generateAliens();
@@ -269,24 +271,6 @@ function generateAliens() {
       margin += 2*margin + 2*BLOCKRADIUS;
     }
 
-    // // commpute random starting position
-    // x += interval - ((Math.random()*100)%interval)/2;
-    // var x1 = (2*x - WIDTH)/WIDTH - BLOCKRADIUS;
-    // var x2 = x1+(2*BLOCKRADIUS*RATIO);
-    // var y1 = 1-margin;
-    // var y2 = y1 - 2*BLOCKRADIUS;
-    //
-    // aliens.push(vec2(x1, y2))
-    // aliens.push(vec2(x1, y1))
-    // aliens.push(vec2(x2, y1))
-    //
-    // aliens.push(vec2(x2, y2))
-    // aliens.push(vec2(x1, y2))
-    // aliens.push(vec2(x2, y1))
-    //
-    // alien_origin.push(x1 + BLOCKRADIUS*RATIO);
-
-
 
     x += interval - ((Math.random()*100)%interval)/2;
     var x1 = (2*x - WIDTH)/WIDTH;
@@ -304,21 +288,7 @@ function addNewAlien() {
   // set up random start directions
   var dir = Math.random() > 0.5 ? 1 : -1;
   alien_movement.push(dir * ALIEN_MOVEMENT_SPEED);
-  //
-  // var x1 = 2 * Math.random() -1 ;
-  // var x2 = x1+(2*BLOCKRADIUS*RATIO);
-  // var y1 = 1 + 2*BLOCKRADIUS;
-  // var y2 = 1;
-  //
-  // aliens.push(vec2(x1, y2))
-  // aliens.push(vec2(x1, y1))
-  // aliens.push(vec2(x2, y1))
-  //
-  // aliens.push(vec2(x2, y2))
-  // aliens.push(vec2(x1, y2))
-  // aliens.push(vec2(x2, y1))
-  //
-  // alien_origin.push(x1 + BLOCKRADIUS*RATIO);
+
   var x1 = 1.98 * Math.random() -1 ;
   var new_alien = alien_default.slice(0);
   for (var j=0; j<new_alien.length; j++) {
@@ -350,29 +320,6 @@ function Alien_Fire(index) {
   }
 
 
-  // if (alien_shoot_timer === ALIEN_SHOOT_FREQUENCY) {
-  //   alien_shoot_timer = 0;
-  //   if (alien_count_front > 0) {
-  //     for (i=alien_count - alien_count_front; i<=alien_count-1; i++) {
-  //         var j = i*6;
-  //         alien_bullets.push(vec2( aliens[j][0]  + 0.4*OFFSET,    aliens[j][1]));
-  //         alien_bullets.push(vec2( aliens[j][0]  + OFFSET, aliens[j][1] - 1.2*OFFSET));
-  //         alien_bullets.push(vec2( aliens[j+2][0]- 0.4*OFFSET,    aliens[j][1]));
-  //     }
-  //   }
-  //   else {
-  //     for (i=0; i<=alien_count; i++) {
-  //         var j = i*6;
-  //         aliens.push(vec2( aliens[j][0]  + 0.5*OFFSET,    aliens[j][1]));
-  //         aliens.push(vec2( aliens[j][0]  + OFFSET, aliens[j][1] - OFFSET));
-  //         aliens.push(vec2( aliens[j+2][0]- 0.5*OFFSET,    aliens[j][1]));
-  //     }
-  //   }
-  //   alien_fall_speed += ALIEN_FALL_ACCELERATION;
-  // }
-  // else {
-  //   alien_shoot_timer+=1;
-  // }
 }
 
 function Player_Movement() {
@@ -384,29 +331,17 @@ function Player_Movement() {
     else if (player_position < -LIMIT) {
       player_position = -LIMIT
     }
+    else {
+      for (i=0; i<player_default.length; i++) {
+        player[i] = vec2(player[i][0] + player_movement, player[i][1]);
+      }
+    }
   }
 
-  for (i=0; i<player_default.length; i++) {
-    player[i] = vec2(player[i][0] + player_movement, player[i][1]);
-  }
-  // player[0] = vec2( player_position - OFFSET, -1);
-  // player[1] = vec2( player_position - OFFSET, -1 + 2* BLOCKRADIUS );
-  // player[2] = vec2( player_position + OFFSET, -1 + 2* BLOCKRADIUS );
-  // player[3] = vec2( player_position + OFFSET, -1);
-  // player[4] = vec2( player_position - OFFSET, -1);
-  // player[5] = vec2( player_position + OFFSET, -1 + 2* BLOCKRADIUS );
 }
 
 function Alien_Movement() {
-  // for (i=0; i<alien_count; i++) {
-  //   var j = 6*i;
-  //   aliens[j]     = vec2(aliens[j][0]     + alien_movement[i],aliens[j][1]     - alien_fall_speed);
-  //   aliens[j + 1] = vec2(aliens[j + 1][0] + alien_movement[i],aliens[j + 1][1] - alien_fall_speed);
-  //   aliens[j + 2] = vec2(aliens[j + 2][0] + alien_movement[i],aliens[j + 2][1] - alien_fall_speed);
-  //   aliens[j + 3] = vec2(aliens[j + 3][0] + alien_movement[i],aliens[j + 3][1] - alien_fall_speed);
-  //   aliens[j + 4] = vec2(aliens[j + 4][0] + alien_movement[i],aliens[j + 4][1] - alien_fall_speed);
-  //   aliens[j + 5] = vec2(aliens[j + 5][0] + alien_movement[i],aliens[j + 5][1] - alien_fall_speed);
-  // }
+
   for (i=0; i<aliens.length; i+=alien_default.length) {
     var k = i/alien_default.length;
     for (j=0; j<alien_default.length; j++) {
@@ -438,36 +373,16 @@ function Alien_Collisions() {
     var j = i / alien_default.length;
     if (aliens[i][0] <= -1)
       alien_movement[j] = -alien_movement[j]  ;
-    else if (aliens[i + 2][0] >= 1)
+    else if (aliens[i + 6][0] >= 1)
       alien_movement[j] = -alien_movement[j];
     else if (aliens[i][0] < alien_origin[j] - ALIEN_MOVEMENT_RANGE ||
              aliens[i + 2][0] > alien_origin[j] + ALIEN_MOVEMENT_RANGE)
       alien_movement[j] = -alien_movement[j];
-    if (aliens[i][1] < -1) {
+    if (aliens[i+1][1] < -1) {
       GameOver();
     }
   }
-  //
-  // for (i=0; i<alien_count; i++) {
-  //   if (aliens[i*6][0] <= -1)
-  //     alien_movement[i] = -alien_movement[i]  ;
-  //   else if (aliens[i*6 + 2][0] >= 1)
-  //     alien_movement[i] = -alien_movement[i];
-  //   else if (aliens[i*6][0] < alien_origin[i] - ALIEN_MOVEMENT_RANGE ||
-  //            aliens[i*6 + 2][0] > alien_origin[i] + ALIEN_MOVEMENT_RANGE)
-  //     alien_movement[i] = -alien_movement[i];
-  //   if (aliens[i*6][1] < -1) {
-  //     GameOver();
-  //   }
-  // }
 
-  // for (i=1; i<alien_count; i++) {
-  //   //console.log(i, Math.floor(alien_count/2));
-  //   if (aliens[i*6][0] <= aliens[i*6 - 4][0] && aliens[i*6][1] === aliens[i*6 - 2][1]) {
-  //     alien_movement[i]   = -alien_movement[i] + ALIEN_ACCELERATION;
-  //     alien_movement[i-1] = -alien_movement[i-1] - ALIEN_ACCELERATION;
-  //   }
-  // }
 }
 
 function Remove_Player_Bullet(index) {
@@ -478,15 +393,15 @@ function Remove_Alien_Bullet(index) {
   alien_bullets.splice(index,3);
 }
 
+
 function Remove_Alien(index) {
-  // alien_count -= 1;
-  // var x_pos = aliens[index][0];
+
   aliens.splice(index, alien_default.length);
   alien_movement.splice(index/alien_default.length,1);
   alien_origin.splice(index/alien_default.length,1);
+  Update_Score();
   addNewAlien();
-  // if (index/6 > alien_count - alien_count_front - 1)
-  //   alien_count_front -= 1;
+
 }
 
 function Player_Bullet_Collisions() {
@@ -523,7 +438,7 @@ function Alien_Bullet_Collisions() {
         Remove_Alien_Bullet(i);
       }
       else if (alien_bullets[i+1][1] < player[2][1]) {
-        if (alien_bullets[i][0] < player[2][0] && alien_bullets[i+2][0] > player[0][0])
+        if (alien_bullets[i][0] < player[12][0] && alien_bullets[i+2][0] > player[0][0])
           GameOver();
       }
   }
