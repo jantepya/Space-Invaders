@@ -1,5 +1,5 @@
 # Space Invaders
-------
+
 ## About
 ![Imgur](https://i.imgur.com/olLZbSF.png)
 
