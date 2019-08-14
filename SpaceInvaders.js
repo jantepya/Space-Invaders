@@ -55,11 +55,11 @@ var pPosition;
 var colorLoc;
 
 player_default = [
-  vec2(-0.06,-1.0),
-  vec2(-0.06,-0.9),
+  vec2(-0.05,-1.0),
+  vec2(-0.05,-0.9),
   vec2(-0.04,-0.9),
 
-  vec2(-0.06,-1.0),
+  vec2(-0.05,-1.0),
   vec2(-0.04,-0.9),
   vec2(-0.04,-1.0),
 
@@ -71,16 +71,16 @@ player_default = [
   vec2(0.04,-0.95),
   vec2(-0.04,-0.95),
 
-  vec2(0.06,-1.0),
-  vec2(0.06,-0.9),
+  vec2(0.05,-1.0),
+  vec2(0.05,-0.9),
   vec2(0.04,-0.9),
 
-  vec2(0.06,-1.0),
+  vec2(0.05,-1.0),
   vec2(0.04,-0.9),
   vec2(0.04,-1.0),
 
   vec2(0.02,-0.95),
-  vec2(0.0,-0.89),
+  vec2(0.0,-0.91),
   vec2(-0.02,-0.95),
 ]
 
@@ -445,32 +445,24 @@ function Alien_Bullet_Collisions() {
 }
 
 function GameOver() {
-  var gameover = document.getElementById( "Game_Over" );
   gameover.hidden  = false;
   quitGame = 0;
 }
 
-function Check_Game_Status() {
-  if (alien_count === 0) {
-    alert("You WIN!!!!");
-    resetGame();
-  }
-}
+
 
 function render() {
-
-    now = Date.now();
-    elapsed = now - then;
 
     if (quitGame === 0) {
       return
     }
 
+    now = Date.now();
+    elapsed = now - then;
+
     if (elapsed > FPS_INTERVAL) {
       then = now - (elapsed % FPS_INTERVAL);
 
-
-      Check_Game_Status();
       Player_Movement();
       Alien_Movement();
       Alien_Fire();
@@ -482,10 +474,8 @@ function render() {
       gl.bufferData( gl.ARRAY_BUFFER, flatten(player.concat(player_bullets, aliens, alien_bullets)),  gl.STATIC_DRAW);
 
       gl.uniform4fv(colorLoc, [0.0, 1.0, 0.0, 1.0]);  // set color
-      gl.drawArrays( gl.TRIANGLES, 0, player.length ); // draw player
+      gl.drawArrays( gl.TRIANGLES, 0, player.length + player_bullets.length); // draw player + bullets
 
-
-      gl.drawArrays( gl.TRIANGLES, player.length, player_bullets.length); // draw player bullets
 
       gl.uniform4fv(colorLoc, [1.0, 0.0, 0.0, 1.0]);  // set color
       gl.drawArrays( gl.TRIANGLES, player.length + player_bullets.length, aliens.length + alien_bullets.length); // aliens + bullets
