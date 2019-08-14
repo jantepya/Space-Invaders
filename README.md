@@ -1,5 +1,9 @@
 # Space Invaders
+------
+## About
+![Imgur](https://i.imgur.com/olLZbSF.png)
 
+This is just a Javascript implementation of a Space Invaders type game I made for fun.
 
 ## Controls:
 
