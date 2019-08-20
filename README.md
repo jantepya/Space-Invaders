@@ -16,3 +16,6 @@ This is just a Javascript implementation of a Space Invaders type game I made fo
 
 ## Credits
 Background image: https://www.pexels.com/@pixabay
+
+## Demo
+Try the game here: https://jantepya.github.io/Space-Invaders/
