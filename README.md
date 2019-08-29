@@ -18,4 +18,4 @@ This is just a Javascript implementation of a Space Invaders type game I made fo
 Background image: https://www.pexels.com/@pixabay
 
 ## Demo
-Try the game here: https://jantepya.github.io/Space-Invaders/
+Try the game here: https://jonmadethings.com/Space-Invaders/
