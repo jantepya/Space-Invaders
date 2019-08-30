@@ -289,7 +289,9 @@ function addNewAlien() {
   var dir = Math.random() > 0.5 ? 1 : -1;
   alien_movement.push(dir * ALIEN_MOVEMENT_SPEED);
 
-  var x1 = 1.98 * Math.random() -1 ;
+  var x1 = 2 * Math.random() -1 ;
+  x1 = Math.max( -1+BLOCKRADIUS, x1);
+  x1 = Math.min( 1-BLOCKRADIUS, x1);
   var new_alien = alien_default.slice(0);
   for (var j=0; j<new_alien.length; j++) {
     new_alien[j] =  vec2(new_alien[j][0] + x1, new_alien[j][1] + 0.2);
