@@ -132,7 +132,6 @@ window.addEventListener("keydown", getKey);
 window.addEventListener("keyup", releaseKey);
 window.addEventListener('resize', resizeCanvas);
 
-
 function getKey(key) {
   pressed = true;
   if (key.code === "ArrowLeft")
@@ -143,13 +142,17 @@ function getKey(key) {
     player_movement = 0;
 
   if (key.code === 'KeyR') {
-    resetGame();
-    render();
+    restart();
   }
 
   if (key.code == 'KeyP'){
     PauseGame();
   }
+}
+
+function restart() {
+  resetGame();
+  render();
 }
 
 function releaseKey(key) {
@@ -178,7 +181,6 @@ function reset_time() {
 
 function Update_Score() {
   score += 1;
-  console.log(gamescore);
   gamescore.innerText  = score;
 }
 
