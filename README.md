@@ -5,6 +5,11 @@
 
 This is just a Javascript implementation of a Space Invaders type game I made for fun.
 
+
+## Try it Out:
+Play the game here: https://jonmadethings.com/Space-Invaders/
+
+
 ## Controls:
 
 | Key | Action |
@@ -16,6 +21,3 @@ This is just a Javascript implementation of a Space Invaders type game I made fo
 
 ## Credits
 Background image: https://www.pexels.com/@pixabay
-
-## Demo
-Try the game here: https://jonmadethings.com/Space-Invaders/
