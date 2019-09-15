@@ -134,18 +134,23 @@ window.addEventListener('resize', resizeCanvas);
 
 function getKey(key) {
   pressed = true;
-  if (key.code === "ArrowLeft")
+  console.log(key);
+  if (key.keyCode === 37)
+    // Arrow left
     player_movement = -PLAYER_MOVEMENT_SPEED;
-  else if (key.code === "ArrowRight")
+  else if (key.keyCode === 39)
+    // Arrow right
     player_movement = PLAYER_MOVEMENT_SPEED;
   else
     player_movement = 0;
 
-  if (key.code === 'KeyR') {
+  if (key.keyCode === 82) {
+    // R
     restart();
   }
 
-  if (key.code == 'KeyP'){
+  if (key.keyCode === 80){
+    // P
     PauseGame();
   }
 }
